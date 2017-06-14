@@ -125,6 +125,31 @@ module.exports = {
     });
 
     return q.promise;
-  }
+  },
+
+
+  
+  save(db, username, password,fullname) {
+    let q = Q.defer();
+    // sql query
+    let sql = `
+    INSERT INTO users(username, password, fullname)
+    VALUES(?, ?, ?)
+    `;
+    // run query
+    db.getConnection((err, conn) => {
+      if (err) {
+        q.reject(err);
+      } else {
+        conn.query(sql, [username, password, fullname], (err, rows) => {
+          if (err) q.reject(err);
+          else q.resolve(rows);
+        });
+        conn.release();
+      }
+    });
+
+    return q.promise;
+  },
 
 }
